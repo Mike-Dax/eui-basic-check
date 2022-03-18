@@ -65,40 +65,54 @@ async function main() {
     if (port.path.includes("Bluetooth")) continue;
     console.log(`connecting to ${port.path}`);
 
-    const openedPort = await new Promise<SerialPort>((resolve, reject) => {
-      let opened: SerialPort;
+    const openedPort = await new Promise<SerialPort>(
+      async (resolve, reject) => {
+        let opened: SerialPort;
 
-      opened = new SerialPort(port.path, {
-        autoOpen: false,
-        baudRate: 115200,
-      });
+        opened = new SerialPort(port.path, {
+          autoOpen: false,
+          baudRate: 115200,
+        });
 
-      opened.open((err: Error) => {
-        if (err) {
-          reject(err);
-          return;
-        }
+        console.log(`port created`);
+        await new Promise((resolve, reject) => setTimeout(resolve, 1000));
 
-        // Set our port settings immediately
-        opened.set(onAttachmentPortSettingsDefault);
+        console.log(`opening port`);
+        opened.open(async (err: Error) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          console.log(`port opened`);
 
-        console.log(`connected to ${port.path}`);
-        resolve(opened);
-      });
+          await new Promise((resolve, reject) => setTimeout(resolve, 1000));
 
-      opened.on("data", (data: Buffer) => {
-        console.log(`received data`, data);
-        decoder.receiveCobs(data);
-      });
+          console.log(`rts set`);
+          // Set our port settings immediately
+          opened.set(onAttachmentPortSettingsDefault);
 
-      opened.on("error", (error: Error) => {
-        console.log(`received error from ${port.path}:`, error);
-      });
+          console.log(`connected to ${port.path}`);
+          resolve(opened);
+        });
 
-      opened.on("close", () => {
-        console.log(`closed ${port.path}:`);
-      });
-    });
+        opened.on("data", (data: Buffer) => {
+          console.log(`received data`, data);
+          decoder.receiveCobs(data);
+        });
+
+        opened.on("error", (error: Error) => {
+          console.log(`received error from ${port.path}:`, error);
+        });
+
+        opened.on("close", () => {
+          console.log(`closed ${port.path}:`);
+        });
+      }
+    );
+
+    await new Promise((resolve, reject) => setTimeout(resolve, 1000));
+
+    console.log(`sending messages:`);
 
     const requestBoardIDMessage = new Message(
       MESSAGEIDS.BOARD_IDENTIFIER,
