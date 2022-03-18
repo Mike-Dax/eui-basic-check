@@ -1,0 +1,23 @@
+{
+  "name": "eui-basic-check",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Mike-Dax/eui-basic-check.git",
+  "author": "Michael Orenstein <michael@whiteshadows.me>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/debug": "^4.1.7",
+    "@types/node": "^16.0.0",
+    "@types/serialport": "^8.0.0",
+    "debug": "^4.3.4"
+  },
+  "dependencies": {
+    "serialport": "9.2.0",
+    "ts-node": "^9.0.0",
+    "tslib": "^2.0.3",
+    "typescript": "4.3.2"
+  },
+  "scripts": {
+    "test": "ts-node ./src/serial/list.ts"
+  }
+}
