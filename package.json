@@ -19,5 +19,8 @@
   },
   "scripts": {
     "test": "ts-node ./src/serial/list.ts"
+  },
+  "resolutions": {
+    "@serialport/bindings": "9.2.0"
   }
 }
