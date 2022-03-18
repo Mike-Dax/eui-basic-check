@@ -60,9 +60,9 @@ async function main() {
 
   for (const port of ports) {
     const decoder = new StatefulCobsDecoder();
-    console.log(`connecting to ${port.path}`);
 
     if (port.path.includes("Bluetooth")) continue;
+    console.log(`connecting to ${port.path}`);
 
     const openedPort = await new Promise<SerialPort>((resolve, reject) => {
       let opened: SerialPort;
