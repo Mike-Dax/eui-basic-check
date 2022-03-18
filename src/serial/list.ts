@@ -47,7 +47,8 @@ class StatefulCobsDecoder {
   }
 
   async receiveBinary(buffer: Buffer) {
-    console.log(`received message`, decode(buffer));
+    const msg = decode(buffer);
+    console.log(`received message ${msg.messageID} with payload`, msg.payload);
   }
 }
 
@@ -93,6 +94,10 @@ async function main() {
       opened.on("error", (error: Error) => {
         console.log(`received error from ${port.path}:`, error);
       });
+
+      opened.on("close", () => {
+        console.log(`closed ${port.path}:`);
+      });
     });
 
     const requestBoardIDMessage = new Message(
@@ -103,16 +108,17 @@ async function main() {
     requestBoardIDMessage.metadata.internal = true;
     requestBoardIDMessage.metadata.query = true;
 
-    const requestBuffer = encodeCobs(encode(requestBoardIDMessage));
-    console.log(`writing`, requestBuffer);
-    openedPort.write(requestBuffer);
-    openedPort.flush();
+    for (let index = 0; index < 5; index++) {
+      const requestBuffer = encodeCobs(encode(requestBoardIDMessage));
+      console.log(`writing #${index}`, requestBuffer);
+      openedPort.write(requestBuffer);
+      openedPort.flush();
 
-    // wait a few seconds for a reply
-    await new Promise((resolve, reject) => setTimeout(resolve, 3000));
+      // wait a few seconds for a reply
+      await new Promise((resolve, reject) => setTimeout(resolve, 1000));
+    }
 
     openedPort.close();
-    console.log(`closing connection to ${port.path}`);
   }
 }
 
