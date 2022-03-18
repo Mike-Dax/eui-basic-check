@@ -1,4 +1,4 @@
-import SerialPort from "serialport";
+import { SerialPort } from "serialport";
 import { encode } from "../protocol/encode";
 import { decode } from "../protocol/decode";
 import { MESSAGEIDS, TYPES } from "../protocol/constants";
@@ -69,10 +69,11 @@ async function main() {
       async (resolve, reject) => {
         let opened: SerialPort;
 
-        opened = new SerialPort(port.path, {
-          autoOpen: false,
-          baudRate: 115200,
-        });
+      opened = new SerialPort({
+        path: port.path,
+        autoOpen: false,
+        baudRate: 115200,
+      });
 
         console.log(`port created`);
         await new Promise((resolve, reject) => setTimeout(resolve, 1000));
