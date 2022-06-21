@@ -13,6 +13,8 @@ const onAttachmentPortSettingsDefault = {
 
 const dPipelines = debug("electricui-protocol-binary-cobs:pipelines");
 
+let successfulReplies = 0;
+
 class StatefulCobsDecoder {
   buffer = Buffer.alloc(0);
 
@@ -49,6 +51,7 @@ class StatefulCobsDecoder {
   async receiveBinary(buffer: Buffer) {
     const msg = decode(buffer);
     console.log(`received message ${msg.messageID} with payload`, msg.payload);
+    successfulReplies++;
   }
 }
 
@@ -141,6 +144,12 @@ async function main() {
       console.log(`error with port ${port.path}:`);
       console.error(e);
     }
+  }
+
+  if (successfulReplies === 0) {
+    // Fail if no replies were received
+    console.error(`no replies received, erroring.`);
+    process.exit(1);
   }
 }
 
