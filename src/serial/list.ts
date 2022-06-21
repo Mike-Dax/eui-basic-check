@@ -60,10 +60,11 @@ async function main() {
   );
 
   for (const port of ports) {
-    const decoder = new StatefulCobsDecoder();
-
     if (port.path.includes("Bluetooth")) continue;
+    if (port.path.startsWith("/dev/ttyS")) continue; // ignore screens
+
     console.log(`connecting to ${port.path}`);
+    const decoder = new StatefulCobsDecoder();
 
     const openedPort = await new Promise<SerialPort>(
       async (resolve, reject) => {
@@ -133,6 +134,8 @@ async function main() {
     }
 
     openedPort.close();
+
+    console.log(`finished with ${port.path}`);
   }
 }
 
